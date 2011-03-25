@@ -1,0 +1,12 @@
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubTitleMaker.exe
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubTitleMaker.pdb
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\ResolveAssemblyReference.cache
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\SubTitleMaker.Form1.resources
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\SubTitleMaker.Properties.Resources.resources
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\GenerateResource.read.1.tlog
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\GenerateResource.write.1.tlog
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\SubTitleMaker.exe
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\SubTitleMaker.pdb
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\Sublib1.dll
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubExtractor.dll
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubExtractor.pdb
