@@ -1,6 +1,47 @@
 // Sublib1.c : Defines the exported functions for the DLL application.
 //
+/*
+ * Based on AVCHD2SRT-core.c obtained as noted below
 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Modified version of code from Henry Devettens - see comments below
+ * exports 2 functions - createsub(char* filename, int cameratype, char token)
+ * and freesub(char *pointer)
+ *
+ * this dll is not safe for use in multithreaded cases. It currently relies on
+ * global variables that are set when the library is loaded and persist accross calls
+ * to the library.
+ *
+ * It also rely on the win32 version of FFmpeg library dlls
+ *
+ * #define inline _inline - added at the beginning to consume the FFMPEG c code
+ * #define snprintf _snprintf  - added at the beginning to consume the FFMPEG c code
+ *
+ * Used FFMPEG libraries from: http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/dev/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared-dev.7z
+ * to enable the build - you need the include and lib directores to build
+ * FFMPEG dlls needed to run are from: http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared.7z
+ * to actually run the binary - you need all the dlls 
+ *
+ * setting up visual studio express 2010 to use FFMPEG:
+ * for the project properties - 
+ * under c/c++ general - add include folder from links above to "additional include directories"
+ * under linker general - add lib folder from links above to "additional libary directories"
+ * under linker input - add each of the FFMPEG libs to the "additional dependencies" - avcodec.lib;avcore.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib
+ * 
+ * The FFMPEG dlls (from above) need to be present in the executable directory along with the dll created by this code to use this library
+ */
 #include "stdafx.h"
 
 
@@ -81,7 +122,7 @@ char fileout[1024];		// output file name
 //FILE *filesrt;			    // filepointer to the output file -- comment out for use in library
 int alignct = 0; // added - used to keep track of the output string position
 //char storage[100000];  used in static memory version
-char* bufferptr;
+//char* bufferptr;  results pointer - now initallized within main
 
 
 
@@ -139,7 +180,8 @@ static void print_one_srt_entry(char* storagestr, char token) {
 //adding code to free the memory here
 
 __declspec(dllexport) void freesub(char* pointer) {
-	free (bufferptr);
+	//free (bufferptr); just testing, this works
+	free (pointer);
 	return;
 }
 
@@ -165,13 +207,14 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
   int lonE, lonD, lonM, lonS;               		// longitude "east", deg, min, sec
   int altS, altL, altD;                               	// altitude below/above sea, level, divisor
   int speed, speD, speU;				// speed, speed divisor, speed unit
-  //char* bufferptr;
   long duration = 0;
+  char* bufferptr;   //this is the pointer to the actual results string
 
   srtTi = 0;   //testing to see what this does
   srtTni = 0;   //testing to see what this does
   alignct = 0;  //testing to see what this does
   srt = -1; //testing to see what this does
+
 
   //bufferptr = (char*) malloc (buffersize);   //do this dynamically after calculating the length
   fprintf(stderr, "Input file name to dll is %s\n", filename);
@@ -214,7 +257,7 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
 										//something is clearly wrong when I used 64 before, using 640 prevents heap corruption errors, but output is wierd.
 										//number of times I can call the function depends on the size of this malloc - seems like I am not indexing starting
 										//at the beginning of the memory - I can go once 64 below and about 11/12 times with 640
-										//silly me - the icrement counter was not being reset as it is a global - now it is ok, no heap corruption.
+										//silly me - the increment counter was not being reset as it is a global - now it is ok, no heap corruption.
   bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration.
 
   fprintf(stderr, "the duration var is %d\n",duration);
