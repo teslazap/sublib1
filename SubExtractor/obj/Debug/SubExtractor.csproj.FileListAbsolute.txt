@@ -1,0 +1,6 @@
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\bin\Debug\Sublib1.dll
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\bin\Debug\SubExtractor.dll
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\bin\Debug\SubExtractor.pdb
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\obj\Debug\ResolveAssemblyReference.cache
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\obj\Debug\SubExtractor.dll
+E:\Joe_Docs\Documents\Visual Studio 2010\Projects\UseLib\SubExtractor\obj\Debug\SubExtractor.pdb
