@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubTitleMaker", "SubTitleMaker\SubTitleMaker.csproj", "{FF5A778B-30E5-496C-87E9-78CB865B339E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubExtractor", "..\UseLib\SubExtractor\SubExtractor.csproj", "{A37AA3F9-2AFB-4080-8A13-6FC088939282}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubExtractor", "..\Subextractor\SubExtractor.csproj", "{A37AA3F9-2AFB-4080-8A13-6FC088939282}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

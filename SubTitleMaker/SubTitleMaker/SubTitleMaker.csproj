@@ -77,7 +77,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\UseLib\SubExtractor\SubExtractor.csproj">
+    <ProjectReference Include="..\..\Subextractor\SubExtractor.csproj">
       <Project>{A37AA3F9-2AFB-4080-8A13-6FC088939282}</Project>
       <Name>SubExtractor</Name>
     </ProjectReference>
