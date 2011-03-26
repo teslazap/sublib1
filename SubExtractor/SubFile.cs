@@ -9,19 +9,23 @@ namespace SubExtractor
     //replace with xml docs
     //relies on c library Sublib1.dll to be in the same executable directory
     //also needs avformat-52.dll and avcodec-52.dll (From FFMpeg) to be in the excutable directory
-    //constructor takes pathname (as a string) to a mts movie file or pathname and the cameratype enum
-    // call new Subfile (filenamestring)
+    //constructor has no args
+    //application using this library must:
+    // 1. Set VideoFile property to the full pathname of the mts file
+    // 2. Set FpsType to fpstype enum - defaults to fpstype.Type1
+    // 3. Call MakeSubTitles() after doing 1 and 2.
     //Generates
     // RawSubOutput - String that contains subtitles with * breaking each subtitle
     // FullSubOutput - String that contains subtitles with \n breaking each subtitle - probably what you want
     // SplitSubOutput - List<String> contains each of the individual 1 second subtitle bits
     //
     // subtitles are split automatically, wastes memory, but I assume that isn't an issue.
+    // as of this point sublib1 cannot be called in a multithreaded fashion, as it has "static" variables so don't try yet.
 
     public class SubFile
     {
         [DllImport("Sublib1.dll")]
-        //private static extern IntPtr createsub(IntPtr filename, int cameratype, byte separator);
+        //private static extern IntPtr createsub(IntPtr filename, int cameratype, byte separator);  //trying to fix the unbalanced stack warning
         private static extern IntPtr createsub([MarshalAs(UnmanagedType.LPStr)]String filename, System.Int32 cameratype, System.Char separator);
 
         [DllImport("Sublib1.dll")]
@@ -44,29 +48,9 @@ namespace SubExtractor
         public SubFile()
         {
             
-            //this.moviefile = p;
-            //MakeSubTitles();
-            //SplitSubTitles();
         }
 
-        //public SubFile(string p, int cameratypein)
-        //{
-        //    this.moviefile = p;
-        //    if (cameratypein == 0)
-        //    {
-        //        camera_type = 0;
-        //    }
-        //    else if (cameratypein == 1)
-        //    {
-        //        camera_type = 1;
-        //    }
-        //    else
-        //    {
-        //        throw new SystemException("Camera Type not Supported");
-        //    }
-        //    MakeSubTitles();
-        //    SplitSubTitles();
-        //}
+
 
 
         //properties follow
@@ -130,16 +114,16 @@ namespace SubExtractor
             
             //call the c dll at this point and convert to a C# string
             IntPtr output = IntPtr.Zero;
-            //filename = Marshal.StringToHGlobalAnsi(moviefile);
+            
+            //filename = Marshal.StringToHGlobalAnsi(moviefile);  //doesn't apear necessary to marshal filname string to pointer
             //byte sep = (byte) '*';
 
             //IntPtr output = createsub(filename, 1, sep);
-            output = createsub(moviefile, camera_type, '*');    //always flags a stack imbalace error in debug mode - ignore for now
-            //Marshal.FreeHGlobal(filename);
+            output = createsub(moviefile, camera_type, '*');    //always flags a stack imbalace error in debug mode - ignore for now (shut off in exceptions)
             rawsubfile = (String)Marshal.PtrToStringAnsi(output);
-            freesub(output);                                       //use method in dll to free the results pointer - don't know if this matters, does work though
-            //Marshal.FreeHGlobal(output);   //what is the right way to free the output pointer?
-            //Marshal.FreeCoTaskMem(output);
+            //freesub(output);                                    //use method in dll to free the results pointer - don't know if this matters, does work though
+            //Marshal.FreeHGlobal(output);   //what is the right way to free the output pointer? This will throw exception. 
+         
             //Throw exceptions for each possible error returned by the c dll
 
             if (string.Compare(rawsubfile, "file_open_error") == 0)
@@ -170,6 +154,8 @@ namespace SubExtractor
             {
                 throw new System.Exception("Could not open Codec");
             }
+
+            freesub(output);   //free pointer in c code here
 
             StringBuilder editsubs = new StringBuilder(rawsubfile);
             editsubs.Replace('*', '\n');
