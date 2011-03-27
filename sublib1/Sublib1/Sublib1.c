@@ -20,14 +20,14 @@
  * exports 2 functions - createsub(char* filename, int cameratype, char token)
  * and freesub(char *pointer)
  *
- * this dll is not safe for use in multithreaded cases. It currently relies on
+ * this dll may be safe for use in multithreaded cases. It no longer relies on
  * global variables that are set when the library is loaded and persist accross calls
- * to the library.
+ * to the library. However it hasn't been tested in multithreaded use.
  *
  * It also rely on the win32 version of FFmpeg library dlls
  *
  * #define inline _inline - added at the beginning to consume the FFMPEG c code
- * #define snprintf _snprintf  - added at the beginning to consume the FFMPEG c code
+ * #define snprintf _snprintf  - added at the beginning to consume the avchd2srt c code
  *
  * Used FFMPEG libraries from: http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/dev/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared-dev.7z
  * to enable the build - you need the include and lib directores to build
@@ -40,7 +40,7 @@
  * under linker general - add lib folder from links above to "additional libary directories"
  * under linker input - add each of the FFMPEG libs to the "additional dependencies" - avcodec.lib;avcore.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib
  * 
- * The FFMPEG dlls (from above) need to be present in the executable directory along with the dll created by this code to use this library
+ * The FFMPEG dlls (second link from above) need to be present in the executable directory along with the dll created by this code to use this library
  */
 #include "stdafx.h"
 
@@ -105,92 +105,93 @@ char * weekday[] = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday",
 char * monthname[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 #define BCD_2_INT(c) ((c >> 4)*10+(c&0xf))
 
-int srt=-1;			// srt counter
-char srtT[256], srtTn[256];	// srt text: current and new
-int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
-time_t secsince1970, srtTsec=0;	    // Tricky: if new sub is one sec before current, ignore.
-struct tm t;			// to calculate srtTsec
-time_t start_time, end_time;	    // to measure the duration per file
-char SL;			// will be + for above and - for below sea level
-long int srtTimer;		// start time (in milliseconds) for current srtT
-int srtH, srtM, srtS, srtmS;	// Hour, Minute, Seconds, milli
-int foundgeo;
-int frm;			// frame counter
-int fps_den, fps_num;		// for the frame rate
-float fps;
-char fileout[1024];		// output file name
-//FILE *filesrt;			    // filepointer to the output file -- comment out for use in library
-int alignct = 0; // added - used to keep track of the output string position
-//char storage[100000];  used in static memory version
-//char* bufferptr;  results pointer - now initallized within main
+//int srt=-1;			// srt counter
+//char srtT[256], srtTn[256];	// srt text: current and new
+//int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
+//time_t secsince1970, srtTsec=0;	    // Tricky: if new sub is one sec before current, ignore.
+//struct tm t;			// to calculate srtTsec
+//time_t start_time, end_time;	    // to measure the duration per file
+//char SL;			// will be + for above and - for below sea level
+//long int srtTimer;		// start time (in milliseconds) for current srtT
+//int srtH, srtM, srtS, srtmS;	// Hour, Minute, Seconds, milli
+//int foundgeo;
+//int frm;			// frame counter
+//int fps_den, fps_num;		// for the frame rate
+//float fps;
+//char fileout[1024];		// output file name
+////FILE *filesrt;			    // filepointer to the output file -- comment out for use in library
+//int alignct = 0; // added - used to keep track of the output string position
 
 
 
-/*extern "C"
-{
-	__declspec(dllexport) char* DisplayHelloFromDLL()
-//  __declspec(dllexport) void DisplayHelloFromDLL()
-  {
-	printf ("Hello from DLL !\n");
-	return ("done\n"); //added
-  }
-}*/
 
-static void set_srt_hmsm() {
+//static void set_srt_hmsm() {
+//  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+//  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+//  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+//}
+
+//start editing the output in this function
+/*static void print_one_srt_entry(char* storagestr, char token) {   //merged messy version
+  //set_srt_hmsm();
+  //add set_srt_hmsm here
   srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
   srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
   srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
-}
+  //done add
 
-//start editing the output in this function
-static void print_one_srt_entry(char* storagestr, char token) {
-  set_srt_hmsm();
   //fprintf(filesrt, "%0d\n", srt+1);   //comment out for use in library
   alignct += snprintf (&(storagestr[alignct]), 256, "%0d\n", srt+1);   //added - print to storage buffer
   //fprintf(filesrt, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //comment out for use in library
   alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //added - print to storage buffer
   srtTimer = (long int) (((long int)(frm)*1000L)/fps);
-  set_srt_hmsm();
+  //set_srt_hmsm();
+  //add set_srt_hmsm here
+  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+  //done add
+
   //fprintf(filesrt, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);  //comment out for use in library
   alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);   //added - print to storage buffer
   //fprintf(filesrt, "%s\n", srtT);  //comment out for use in library
   //alignct += snprintf (&(storagestr[alignct]), 256, "%s\n", srtT);  //added - print to storage buffer - does not add separateer character
   alignct += snprintf (&(storagestr[alignct]), 256, "%s%c", srtT,token);  //added - print to storage buffer - adds the separator character after each subtitle
   srtTi = snprintf(srtT, 256, "");
-}
+}*/
 
-/*static int set_output_file (char * filein) {   //entire function commented out for use in library
-  int j;
+/*static void print_one_srt_entry(char* storagestr, char token) {   //cleanedup version
 
-  j = snprintf(fileout, 1024, "%s", filein);
-  if (j>1020) { fprintf(stderr, "File name too long - exit.\n"); return -1;}
-  while ((j>0) && (fileout[j]!='.')) {
-    j--;
-  }
-  if (fileout[j]=='.') {
-    snprintf(&(fileout[j+1]), 4, "srt");
-  }
-  if ((filesrt = fopen(fileout, "w")) == NULL) { 
-     fprintf(stderr, "Cannot open \"%s\" for writing.\n", fileout);
-     return -1;
-  }
-  return 0;
+  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+  //fprintf(filesrt, "%0d\n", srt+1);   //original formating - comment out for use in library
+  alignct += snprintf (&(storagestr[alignct]), 256, "%0d\n", srt+1);   //added - print to storage buffer
+  //fprintf(filesrt, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //comment out for use in library
+  alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //added - print to storage buffer
+  srtTimer = (long int) (((long int)(frm)*1000L)/fps);
+
+  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+  //fprintf(filesrt, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);  //comment out for use in library
+  alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);   //added - print to storage buffer
+  //fprintf(filesrt, "%s\n", srtT);  //comment out for use in library
+  //alignct += snprintf (&(storagestr[alignct]), 256, "%s\n", srtT);  //added - print to storage buffer - does not add separateer character
+  alignct += snprintf (&(storagestr[alignct]), 256, "%s%c", srtT,token);  //added - print to storage buffer - adds the separator character after each subtitle
+  srtTi = snprintf(srtT, 256, "");
 }*/
 
 //adding code to free the memory here
 
 __declspec(dllexport) void freesub(char* pointer) {
-	//free (bufferptr); just testing, this works
-	free (pointer);
+	free (pointer); 
 	return;
 }
 
 
 __declspec(dllexport) char* createsub(char* filename, int cameratype, char token) {
-//int main(int argc, char *argv[]) {
 
-  //int argc = 2;
-  char* argv[5];
   AVFormatContext *pFormatCtx;
   int strm;
   int videoStream;
@@ -207,40 +208,51 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
   int lonE, lonD, lonM, lonS;               		// longitude "east", deg, min, sec
   int altS, altL, altD;                               	// altitude below/above sea, level, divisor
   int speed, speD, speU;				// speed, speed divisor, speed unit
-  long duration = 0;
+  unsigned long duration = 0;
   char* bufferptr;   //this is the pointer to the actual results string
 
-  srtTi = 0;   //testing to see what this does
-  srtTni = 0;   //testing to see what this does
-  alignct = 0;  //testing to see what this does
-  srt = -1; //testing to see what this does
+ // adding previous globals here
+
+	int srt=-1;			// srt counter
+	char srtT[256], srtTn[256];	// srt text: current and new
+	int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
+	time_t secsince1970, srtTsec=0;	    // Tricky: if new sub is one sec before current, ignore.
+	struct tm t;			// to calculate srtTsec
+	time_t start_time, end_time;	    // to measure the duration per file
+	char SL;			// will be + for above and - for below sea level
+	long int srtTimer;		// start time (in milliseconds) for current srtT
+	int srtH, srtM, srtS, srtmS;	// Hour, Minute, Seconds, milli
+	int foundgeo;
+	int frm;			// frame counter
+	int fps_den, fps_num;		// for the frame rate
+	float fps;
+	char fileout[1024];		// output file name
+	int alignct = 0; // added - used to keep track of the output string position
+
+	//done with previous globals here
 
 
-  //bufferptr = (char*) malloc (buffersize);   //do this dynamically after calculating the length
+
+  //srtTi = 0;   //necessary to reset between calls to this function
+  //srtTni = 0;   //necessary to reset between calls to this function
+  //alignct = 0;  //necessary to reset between calls to this function
+  //srt = -1; //necessary to reset between calls to this function
+
   fprintf(stderr, "Input file name to dll is %s\n", filename);
-  //argv[1] = "testthis.m2ts";
-  argv[1] = filename;
 
   av_register_all();
 
-  /*if (argc != 2) {
-      printf("Usage: %s input_file\n\nOutput (srt format) sent to .srt file, Errors to stderr\n\n", 
-             argv[0]);
-      exit(1);
-  }*/
 
   /* allocate the media context */
   pFormatCtx = avformat_alloc_context();
   if (!pFormatCtx) {
       fprintf(stderr, "Memory error\n");
-      //return -1;   //commented out for use in library
 	  return ("memory_error");
   }
 
   // Open video file
-  if(av_open_input_file(&pFormatCtx, argv[1], NULL, 0, NULL)!=0) {
-    fprintf(stderr, "Cannot open file %s.\n", argv[1]);
-    //return -1; // Couldn't open file //commented out for use in library
+  if(av_open_input_file(&pFormatCtx, filename, NULL, 0, NULL)!=0) {
+    fprintf(stderr, "Cannot open file %s.\n", filename);
 	return ("file_open_error");
   }
 
@@ -249,20 +261,17 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
   // Retrieve stream information
   if(av_find_stream_info(pFormatCtx)<0) {
     fprintf(stderr, "Could not find stream information\n");
-    //return -1; // Couldn't find stream information  //commented out for use in library
 	return ("no_stream_info");
   }
-  duration = pFormatCtx->duration;
+  duration = pFormatCtx->duration;     //obtain length of movie clip in ffmpeg units whatever they are
   duration = duration / 1000000 + 10;  //convert to seconds and add 10, just to be safe
-										//something is clearly wrong when I used 64 before, using 640 prevents heap corruption errors, but output is wierd.
-										//number of times I can call the function depends on the size of this malloc - seems like I am not indexing starting
-										//at the beginning of the memory - I can go once 64 below and about 11/12 times with 640
-										//silly me - the increment counter was not being reset as it is a global - now it is ok, no heap corruption.
-  bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration.
+
+  //bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration. 64 bytes is longer than any subtitle section, but check on long movies!
+  bufferptr = (char*) malloc (duration * 100);   //gettting a crash on a large file - but early so I don't know what is going on. THis didn't help
 
   fprintf(stderr, "the duration var is %d\n",duration);
   // Dump information about file onto standard error:
-  dump_format(pFormatCtx, 0, argv[1], 0);
+  dump_format(pFormatCtx, 0, filename, 0);
 
   start_time = time (NULL);
 
@@ -507,7 +516,31 @@ if (tag==0) {	// hack - hope it's right
 							// new subtitle not the same as current
  		// and the new subtitle is not one second older than current. In latter case we assume
 		// B-frames and silenty ignore for now
-            if (srtTi) print_one_srt_entry(bufferptr, token);		// so print & clear the current one if it exists
+            //if (srtTi) print_one_srt_entry(bufferptr, token);		// so print & clear the current one if it exists
+			//going to try to add the print code in here to avoid use of globals - line above will be commented out
+			if (srtTi) {
+
+				srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+				srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+				srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+				alignct += snprintf (&(bufferptr[alignct]), 256, "%0d\n", srt+1);   //added - print to storage buffer
+				alignct += snprintf (&(bufferptr[alignct]), 256, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //added - print to storage buffer
+
+				srtTimer = (long int) (((long int)(frm)*1000L)/fps);
+				srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+				srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+				srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+				alignct += snprintf (&(bufferptr[alignct]), 256, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);   //added - print to storage buffer
+				//fprintf(filesrt, "%s\n", srtT);  //comment out for use in library
+				//alignct += snprintf (&(bufferptr[alignct]), 256, "%s\n", srtT);  //added - print to storage buffer - does not add separateer character
+				alignct += snprintf (&(bufferptr[alignct]), 256, "%s%c", srtT,token);  //added - print to storage buffer - adds the separator character after each subtitle
+				srtTi = snprintf(srtT, 256, "");
+
+			}
+			//done adding print code
+
+
+
             if (srtTni) {				// and if there is a new one, make current
               srt++;
               srtTimer = (long int) (((long int)(frm)*1000L)/fps);
@@ -529,8 +562,29 @@ if (tag==0) {	// hack - hope it's right
     av_free_packet(&packet);
   }
 
-  if (srtTi>0) 
-    print_one_srt_entry(bufferptr, token);
+  //if (srtTi>0) 
+  //print_one_srt_entry(bufferptr, token);
+  //going to try to add the print code in here to avoid use of globals - line above will be commented out
+
+	if (srtTi) {
+
+		srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+		srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+		srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+		alignct += snprintf (&(bufferptr[alignct]), 256, "%0d\n", srt+1);   //added - print to storage buffer
+		alignct += snprintf (&(bufferptr[alignct]), 256, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //added - print to storage buffer
+		srtTimer = (long int) (((long int)(frm)*1000L)/fps);
+		srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
+		srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
+		srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
+		alignct += snprintf (&(bufferptr[alignct]), 256, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);   //added - print to storage buffer
+		//fprintf(filesrt, "%s\n", srtT);  //comment out for use in library
+		//alignct += snprintf (&(bufferptr[alignct]), 256, "%s\n", srtT);  //added - print to storage buffer - does not add separateer character
+		alignct += snprintf (&(bufferptr[alignct]), 256, "%s%c", srtT,token);  //added - print to storage buffer - adds the separator character after each subtitle
+		srtTi = snprintf(srtT, 256, "");
+
+	}
+  //done adding
 
   fprintf(stderr, "  Read %d frames\n", frm);
 
@@ -550,10 +604,6 @@ if (tag==0) {	// hack - hope it's right
   // Close the video file
   av_close_input_file(pFormatCtx);
 
-  //add some testcode for string storage - comment out when using
-  //fprintf (stderr, bufferptr); //this is the final print out, to stderr or a file
-
-  //return 0;  //commented out for use in library
   return (bufferptr);
 
 }
