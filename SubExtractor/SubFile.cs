@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace SubExtractor
 {
@@ -16,11 +17,12 @@ namespace SubExtractor
     // 3. Call MakeSubTitles() after doing 1 and 2.
     //Generates
     // RawSubOutput - String that contains subtitles with * breaking each subtitle
-    // FullSubOutput - String that contains subtitles with \n breaking each subtitle - probably what you want
-    // SplitSubOutput - List<String> contains each of the individual 1 second subtitle bits
-    //
-    // subtitles are split automatically, wastes memory, but I assume that isn't an issue.
-    // as of this point sublib1 cannot be called in a multithreaded fashion, as it has "static" variables so don't try yet.
+    // FullSubOutput - String that contains subtitles with \r\n breaking each subtitle - probably what you want
+    // SplitSubOutput - List<String> contains each of the individual 1 second subtitle bits - you might want this list for further processing
+    //      a call to SplitSubTitles() must preceed access to the SplitSubOutput
+    // RemoveSubTime() lops off the time display at the end of each subtitle. 
+    // subtitles are no longer split automatically.
+    // as of this point sublib1 may be called in a multithreaded fashion, there are no "static" variables in it, but this hasn't been tested.
 
     public class SubFile
     {
@@ -34,6 +36,7 @@ namespace SubExtractor
         private String rawsubfile;
         private string moviefile;
         private String collatedsubfile;
+        private String notimesubfile;
         private List<String> splitsubs;
         private int camera_type = 1;
         public enum fpstype
@@ -107,6 +110,14 @@ namespace SubExtractor
             }
         }
 
+        public String NoTimeSubOutput
+        {
+            get
+            {
+                return notimesubfile;
+            }
+        }
+
         //methods
 
         public void MakeSubTitles() 
@@ -157,9 +168,13 @@ namespace SubExtractor
 
             freesub(output);   //free pointer in c code here
 
-            StringBuilder editsubs = new StringBuilder(rawsubfile);
-            editsubs.Replace('*', '\n');
-            collatedsubfile = editsubs.ToString();
+            //StringBuilder editsubs = new StringBuilder(rawsubfile);
+            //editsubs.Replace("*", "\n");
+            //editsubs.Replace("\x0d", "\x0d\x0a");
+            //collatedsubfile = editsubs.ToString();
+
+            collatedsubfile = rawsubfile.Replace("\n", "\r\n");
+            collatedsubfile = collatedsubfile.Replace("*", "\r\n");
             
         }
 
@@ -170,11 +185,19 @@ namespace SubExtractor
 
         public void SplitSubTitles()
         {
+            String tempstring;
             splitsubs = new List<string>();
             foreach (string substring in rawsubfile.Split('*'))
             {
-                splitsubs.Add(substring);
+                tempstring = substring.Replace("\n", "\r\n");
+                splitsubs.Add(tempstring);
             }
+        }
+
+        public void RemoveSubTime()
+        {
+            Regex rx = new Regex(@"\b\d{2}:\d{2}:\d{2}\r\n", RegexOptions.IgnoreCase);
+            notimesubfile = rx.Replace(collatedsubfile, "\r\n");
         }
     }
 }
