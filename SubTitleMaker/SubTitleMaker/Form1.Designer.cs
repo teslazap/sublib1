@@ -1,4 +1,20 @@
-﻿namespace SubTitleMaker
+﻿//This file is part of the Time and Date Subtitle Maker.
+
+//    The Time and Date Subtitle Maker is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+
+//    Time and Date Subtitle Maker is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+
+//    You should have received a copy of the GNU General Public License
+//    along with the Time and Date Subtilte Maker.  If not, see <http://www.gnu.org/licenses/>.
+
+
+namespace SubTitleMaker
 {
     partial class Form1
     {
@@ -258,7 +274,7 @@
             this.MaximumSize = new System.Drawing.Size(640, 525);
             this.MinimumSize = new System.Drawing.Size(640, 525);
             this.Name = "Form1";
-            this.Text = "Date and Time Subtitle Generator";
+            this.Text = "Time and Date Subtitle Generator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_cameratype.ResumeLayout(false);
             this.groupBox_cameratype.PerformLayout();

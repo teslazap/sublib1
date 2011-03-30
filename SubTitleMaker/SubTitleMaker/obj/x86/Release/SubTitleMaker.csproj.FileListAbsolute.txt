@@ -10,3 +10,4 @@ e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\ob
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\Sublib1.dll
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubExtractor.dll
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Release\SubExtractor.pdb
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Release\SubTitleMaker.AboutBox1.resources

@@ -1,4 +1,22 @@
-﻿using System;
+﻿//This file is part of the Time and Date Subtitle Maker.
+
+//    The Time and Date Subtitle Maker is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+
+//    Time and Date Subtitle Maker is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+
+//    You should have received a copy of the GNU General Public License
+//    along with the Time and Date Subtitle Maker.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,13 +36,14 @@ namespace SubTitleMaker
         private SubFile subtitle_handle = new SubFile();
         private delegate void makesub();
         private int elapsedtime = 0;
-        private String about_message = "SubTitleMaker version 0.1\nKarl Voss (vsko@yahoo.com)\nMarch 26th, 2011";
+        //private String about_message = "SubTitleMaker version 0.1\nKarl Voss (vsko@yahoo.com)\nMarch 26th, 2011";
 
         public Form1()
         {
             InitializeComponent();
             ttip_camera.SetToolTip(groupBox_cameratype, "Method of Determing Frame rate\nIf subtitle time doesn't sync or is slow\ntry the other setting");
             ttip_displaytime.SetToolTip(cb_timedisp, "Select to show both date and time");
+            cb_timedisp.Checked = true;
         }
 
         private void openfile_Click(object sender, EventArgs e)
@@ -37,7 +56,7 @@ namespace SubTitleMaker
             textBox1.Text = filename;
             btn_subgen.Enabled = true;
             btn_savesubs.Enabled = false;
-            cb_timedisp.Enabled = false;
+            cb_timedisp.Enabled = true;
             
         }
 
@@ -119,8 +138,8 @@ namespace SubTitleMaker
                 subtitle_handle.RemoveSubTime();        //automatically remove time
                 btn_subgen.Invoke((MethodInvoker)delegate()
                 {
-                    //rtb_subcontent.Text = subtitle_handle.FullSubOutput;
-                    rtb_subcontent.Text = subtitle_handle.NoTimeSubOutput;
+                    rtb_subcontent.Text = subtitle_handle.FullSubOutput;
+                    //rtb_subcontent.Text = subtitle_handle.NoTimeSubOutput;
                     rtb_subcontent.Enabled = true;
                     btn_savesubs.Enabled = true;
                     btn_subgen.Enabled = true;
@@ -165,7 +184,8 @@ namespace SubTitleMaker
 
         private void aboutToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(about_message, "About SubTitleMaker");
+            AboutBox1 aboutthis = new AboutBox1();
+            aboutthis.ShowDialog();
         }
 
         private void cb_timedisp_Click(object sender, EventArgs e)
