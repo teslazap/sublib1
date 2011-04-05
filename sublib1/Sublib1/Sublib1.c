@@ -24,7 +24,7 @@
  * global variables that are set when the library is loaded and persist accross calls
  * to the library. However it hasn't been tested in multithreaded use.
  *
- * It also rely on the win32 version of FFmpeg library dlls
+ * It also relies on the win32 version of FFmpeg library dlls
  *
  * #define inline _inline - added at the beginning to consume the FFMPEG c code
  * #define snprintf _snprintf  - added at the beginning to consume the avchd2srt c code
@@ -160,27 +160,7 @@ char * monthname[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct
   srtTi = snprintf(srtT, 256, "");
 }*/
 
-/*static void print_one_srt_entry(char* storagestr, char token) {   //cleanedup version
 
-  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
-  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
-  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
-  //fprintf(filesrt, "%0d\n", srt+1);   //original formating - comment out for use in library
-  alignct += snprintf (&(storagestr[alignct]), 256, "%0d\n", srt+1);   //added - print to storage buffer
-  //fprintf(filesrt, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //comment out for use in library
-  alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d --> ", srtH, srtM, srtS, srtmS);  //added - print to storage buffer
-  srtTimer = (long int) (((long int)(frm)*1000L)/fps);
-
-  srtH = (int) (srtTimer/3600000L); srtTimer -= 3600000L*(long int) srtH;
-  srtM = (int) (srtTimer/60000L); srtTimer -= 60000L*(long int) srtM;
-  srtS = (int) (srtTimer/1000L); srtmS = (int) (srtTimer-1000L*(long int)srtS);
-  //fprintf(filesrt, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);  //comment out for use in library
-  alignct += snprintf (&(storagestr[alignct]), 256, "%02d:%02d:%02d,%03d\n", srtH, srtM, srtS, srtmS);   //added - print to storage buffer
-  //fprintf(filesrt, "%s\n", srtT);  //comment out for use in library
-  //alignct += snprintf (&(storagestr[alignct]), 256, "%s\n", srtT);  //added - print to storage buffer - does not add separateer character
-  alignct += snprintf (&(storagestr[alignct]), 256, "%s%c", srtT,token);  //added - print to storage buffer - adds the separator character after each subtitle
-  srtTi = snprintf(srtT, 256, "");
-}*/
 
 //adding code to free the memory here
 
@@ -232,12 +212,6 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
 	//done with previous globals here
 
 
-
-  //srtTi = 0;   //necessary to reset between calls to this function
-  //srtTni = 0;   //necessary to reset between calls to this function
-  //alignct = 0;  //necessary to reset between calls to this function
-  //srt = -1; //necessary to reset between calls to this function
-
   fprintf(stderr, "Input file name to dll is %s\n", filename);
 
   av_register_all();
@@ -267,7 +241,7 @@ __declspec(dllexport) char* createsub(char* filename, int cameratype, char token
   duration = duration / 1000000 + 10;  //convert to seconds and add 10, just to be safe
 
   //bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration. 64 bytes is longer than any subtitle section, but check on long movies!
-  bufferptr = (char*) malloc (duration * 100);   //gettting a crash on a large file - but early so I don't know what is going on. THis didn't help
+  bufferptr = (char*) malloc (duration * 100);   //100 bytes per subtitle section should be sufficient.
 
   fprintf(stderr, "the duration var is %d\n",duration);
   // Dump information about file onto standard error:
