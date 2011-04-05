@@ -148,12 +148,14 @@ namespace SubTitleMaker
                 });  //methodinvoker is HANDY!
                 //btn_subgen.Invoke(new MethodInvoker (delegate() { rtb_subcontent.Text = subtitle_handle.FullSubOutput; }));  //this also works!
             }
-            catch
+            catch (System.Exception e)
             {
                 btn_subgen.Invoke((MethodInvoker)delegate()
                 {
-                    MessageBox.Show("There is a problem with the subtitle file\nYou may not have selected a .mts or .m2ts\n file or it may be corrupt",
+                    String errormessage = "There is a problem with the video file.\nYou may not have selected a .mts or .m2ts\nfile or it may be corrupt.\n\nThe error type is: " + e.Message;
+                    MessageBox.Show(errormessage,
                         "File Open Error");
+                   
                 });
             }
             finally
