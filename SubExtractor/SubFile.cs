@@ -154,11 +154,11 @@ namespace SubExtractor
 
             if (string.Compare(rawsubfile, "file_open_error") == 0)
             {
-                throw new System.Exception("the movie file could not be opened");
+                throw new System.Exception("The Movie File Could Not be Opened");
             }
             if (string.Compare(rawsubfile, "no_stream_info") == 0)
             {
-                throw new System.Exception("could not find stream information");
+                throw new System.Exception("Could Not Find Stream Information");
             }
             if (string.Compare(rawsubfile, "memory_error") == 0)
             {
@@ -170,7 +170,7 @@ namespace SubExtractor
             }
             if (string.Compare(rawsubfile, "videostream_not_found_error") == 0)
             {
-                throw new System.Exception("VideoStream not Found");
+                throw new System.Exception("Video Stream Not Found");
             }
             if (string.Compare(rawsubfile, "codec_not_found_error") == 0)
             {
@@ -178,7 +178,7 @@ namespace SubExtractor
             }
             if (string.Compare(rawsubfile, "open_codec_error") == 0)
             {
-                throw new System.Exception("Could not open Codec");
+                throw new System.Exception("Could Not Open Codec");
             }
 
             freesub(output);   //free pointer in c code here
