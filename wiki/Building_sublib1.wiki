@@ -11,6 +11,11 @@ The third part is a simple GUI, SubMaker, that provides a trivial interface to t
 
 = Details =
 
+==Setting up Visual Studio Express to build sublib1==
+
+1. Download the FFMPEG win32 shared and shared-dev from the following locations:
+
+
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
   * Headings, paragraphs, and lists
