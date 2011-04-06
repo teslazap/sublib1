@@ -13,7 +13,7 @@ The third part is a simple GUI, SubMaker, that provides a trivial interface to t
 
 ==Setting up Visual Studio Express to build sublib1==
 
-1. Download the FFMPEG win32 shared and shared-dev from the following locations:
+ # Download the FFMPEG win32 shared and shared-dev from the following locations:
 
 http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/dev/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared-dev.7z
 
