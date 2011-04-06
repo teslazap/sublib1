@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary Instructions for building sublib1 in Visual Studio Express
 
 = Introduction =
 
