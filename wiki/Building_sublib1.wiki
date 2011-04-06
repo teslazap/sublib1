@@ -15,11 +15,7 @@ The third part is a simple GUI, SubMaker, that provides a trivial interface to t
 
  # Download the FFMPEG win32 shared and shared-dev from the following locations:
 
-http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/dev/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared-dev.7z
-
-AND
-
-http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared.7z
+http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/dev/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared-dev.7z  and  http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/shared/ffmpeg-r26400-swscale-r32676-mingw32-shared.7z
 
  # Extract the shared.dev file into any location on your HD.
  # Download the sublib1 source from here. Open the solution file. You will need to edit the properties of the project to find the FFMPEG headers and .lib files that you just extracted.
