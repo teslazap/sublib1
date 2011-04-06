@@ -33,7 +33,11 @@ http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/shared/ffmpeg-r26400-swscal
  # Finally, expand the *Linker* section in the left panel and click on *Input*. In the right panel you will see a line for *Additional Dependencies*. Each .lib file that is in the "lib" directory you selected above needs to be entered here. If they aren't already entered, click on this and manually enter each file in the the "lib" directory here (such as "avcodec.lib" ...)
  # The project should now build without linker errors and produce a .dll file called "sublib1.dll".
 
+==Using the sublib1.dll==
 
+ # Extract the FFMPEG shared file to any location on your HD.
+ # Locate the "bin" directory. You will need to place all the .dll files in the "bin" directory along side the sublib1.dll you created above.
+ # For example, in order to run and debug the SubExtractor and SubMaker projects, you will need to place all these .dlls along side your application .exe in either the "debug" or "build" directories.
 
 
 
