@@ -38,10 +38,3 @@ http://ffmpeg.arrozcru.org/autobuilds/ffmpeg/mingw32/shared/ffmpeg-r26400-swscal
  # Extract the FFMPEG shared file to any location on your HD.
  # Locate the "bin" directory. You will need to place all the .dll files in the "bin" directory along side the sublib1.dll you created above.
  # For example, in order to run and debug the SubExtractor and SubMaker projects, you will need to place all these .dlls along side your application .exe in either the "debug" or "build" directories.
-
-
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
