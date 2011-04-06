@@ -1,0 +1,17 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Currently this project consists of three parts. The most important is a small c code piece, sublib1, that extracts metadata from h264 files in mts or m2ts containers and returns a subtitle string to code that consumes it.
+
+The second part is SubExtractor. It is a C# wrapper for sublib1 that uses Pinvoke to pull subtitles from h264/mts files. 
+
+The third part is a simple GUI, SubMaker, that provides a trivial interface to the other parts.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
