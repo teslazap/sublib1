@@ -7,7 +7,8 @@ The Time and Date Subtitle Generator program will generate a subtitle (.mts) fil
 
 = Details =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Use of the Time and Date Subtitle Generator is straightforward:
+
+ # Download the latest binary from the "Downloads" section of this project
+ # Extract the .7z file to any convenient location
+ # Run the program by starting SubTitleMaker.exe directly
