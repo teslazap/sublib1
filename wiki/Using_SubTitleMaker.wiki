@@ -1,4 +1,4 @@
-#summary Instructions for using the SubTitleMaker binaries.
+#summary Instructions for using the Time and Date Subtitle Generator binaries.
 
 = Introduction =
 
