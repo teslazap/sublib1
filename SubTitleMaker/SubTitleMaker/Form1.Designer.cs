@@ -67,6 +67,8 @@ namespace SubTitleMaker
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.cb_timedisp = new System.Windows.Forms.CheckBox();
             this.ttip_displaytime = new System.Windows.Forms.ToolTip(this.components);
+            this.toolstoolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.batchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox_cameratype.SuspendLayout();
             this.menu_mainmenu.SuspendLayout();
             this.SuspendLayout();
@@ -202,6 +204,7 @@ namespace SubTitleMaker
             // 
             this.menu_mainmenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.toolstoolStripMenuItem1,
             this.aboutToolStripMenuItem});
             this.menu_mainmenu.Location = new System.Drawing.Point(0, 0);
             this.menu_mainmenu.Name = "menu_mainmenu";
@@ -250,6 +253,21 @@ namespace SubTitleMaker
             this.cb_timedisp.Text = "Display Time";
             this.cb_timedisp.UseVisualStyleBackColor = true;
             this.cb_timedisp.Click += new System.EventHandler(this.cb_timedisp_Click);
+            // 
+            // toolstoolStripMenuItem1
+            // 
+            this.toolstoolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.batchToolToolStripMenuItem});
+            this.toolstoolStripMenuItem1.Name = "toolstoolStripMenuItem1";
+            this.toolstoolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
+            this.toolstoolStripMenuItem1.Text = "Tools";
+            // 
+            // batchToolToolStripMenuItem
+            // 
+            this.batchToolToolStripMenuItem.Name = "batchToolToolStripMenuItem";
+            this.batchToolToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.batchToolToolStripMenuItem.Text = "Batch Tool";
+            this.batchToolToolStripMenuItem.Click += new System.EventHandler(this.batchToolToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -308,6 +326,8 @@ namespace SubTitleMaker
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem1;
         private System.Windows.Forms.CheckBox cb_timedisp;
         private System.Windows.Forms.ToolTip ttip_displaytime;
+        private System.Windows.Forms.ToolStripMenuItem toolstoolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem batchToolToolStripMenuItem;
     }
 }
 

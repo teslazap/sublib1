@@ -67,11 +67,11 @@ namespace SubTitleMaker
             subtitle_handle.VideoFile = filename;      
             if (radioButton_type0.Checked == true)
             {
-                subtitle_handle.FpsType = SubFile.fpstype.Type0;
+                subtitle_handle.FpsType = fpstype.Type0;
             }
             if (radioButton_type1.Checked == true)
             {
-                subtitle_handle.FpsType = SubFile.fpstype.Type1;
+                subtitle_handle.FpsType = fpstype.Type1;
             }
             
             makesub subdelegate = new makesub(generatesubtitles);
@@ -200,6 +200,12 @@ namespace SubTitleMaker
             {
                 rtb_subcontent.Text = subtitle_handle.FullSubOutput;
             }
+        }
+
+        private void batchToolToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BatchForm1 batchwindow = new BatchForm1();
+            batchwindow.Show();
         }
     }
 }

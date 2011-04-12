@@ -11,3 +11,4 @@ e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bi
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Debug\SubExtractor.dll
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\bin\Debug\SubExtractor.pdb
 e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Debug\SubTitleMaker.AboutBox1.resources
+e:\joe_docs\documents\visual studio 2010\Projects\SubTitleMaker\SubTitleMaker\obj\x86\Debug\SubTitleMaker.BatchForm1.resources
