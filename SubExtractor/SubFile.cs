@@ -39,6 +39,26 @@ namespace SubExtractor
     // subtitles are no longer split automatically.
     // as of this point sublib1 may be called in a multithreaded fashion, there are no "static" variables in it, but this hasn't been tested.
 
+
+
+    /// <summary>
+    /// Enum denoting the method of calculating fps
+    /// </summary>
+    public enum fpstype
+    {
+        Type0 = 0,
+        Type1 = 1,
+    }
+        
+    /// <summary>
+    /// SubFile class provides methods to extract date and time metadata from .mts and .m2ts (h264) files and generate subtitle strings.</summary>
+    /// <remarks>Usage:<para />
+    /// <list type="bullet">
+    /// <item><description>Set VideoFile property to the full pathname of the mts file for which you wish to generate date and time subtitles</description></item> 
+    /// <item><description>Set the FpsType property to fpstype enum - this will default to fpstype.Type1</description></item>  
+    /// <item><description>Call MakeSubTitles() </description></item>
+    /// </list> 
+    /// </remarks>
     public class SubFile
     {
         [DllImport("Sublib1.dll")]
@@ -54,25 +74,25 @@ namespace SubExtractor
         private String notimesubfile;
         private List<String> splitsubs;
         private int camera_type = 1;
-        public enum fpstype
-        {
-            Type0 = 0,
-            Type1 = 1,
-        }
         fpstype fpsmode = fpstype.Type1;
+
 
         //constructors
 
+        /// <summary>
+        /// SubFile Constructor
+        /// </summary>
         public SubFile()
         {
             
         }
 
-
-
-
         //properties follow
 
+        /// <summary>
+        /// VideoFile property - pathname of file to be processed
+        /// </summary>
+        /// <value>Set to string that contains full pathname of the videofile to be processed</value>
         public String VideoFile
         {
             get
@@ -85,6 +105,9 @@ namespace SubExtractor
             }
         }
 
+        /// <summary>
+        /// FpsType property - set to fpstype enum
+        /// </summary>
         public fpstype FpsType
         {
             get
@@ -101,7 +124,9 @@ namespace SubExtractor
             
     
 
-
+        /// <summary>
+        /// Unedited subtitle string - including separators
+        /// </summary>
         public String RawSubOutput
         {
             get
@@ -110,6 +135,9 @@ namespace SubExtractor
             }
         }
 
+        /// <summary>
+        /// Subtitle string including date and time
+        /// </summary>
         public String FullSubOutput
         {
             get
@@ -117,6 +145,10 @@ namespace SubExtractor
                 return collatedsubfile;
             }
         }
+        
+        /// <summary>
+        /// List of subtitle strings split by entry
+        /// </summary>
         public List<String> SplitSubOutput
         {
             get
@@ -125,6 +157,9 @@ namespace SubExtractor
             }
         }
 
+        /// <summary>
+        /// Subtitle string with date but not time
+        /// </summary>
         public String NoTimeSubOutput
         {
             get
@@ -193,11 +228,17 @@ namespace SubExtractor
             
         }
 
+        /// <summary>
+        /// Writes the raw subtitle string to the console - for debugging
+        /// </summary>
         public void PrintOutput()  //writes the raw subfile to console - not usually what you want - good for debuging
         {
             Console.Write(rawsubfile);
         }
 
+        /// <summary>
+        /// Splits the subtitles by entry
+        /// </summary>
         public void SplitSubTitles()
         {
             String tempstring;
@@ -209,6 +250,9 @@ namespace SubExtractor
             }
         }
 
+        /// <summary>
+        /// Removes the time from subtitle string
+        /// </summary>
         public void RemoveSubTime()
         {
             Regex rx = new Regex(@"\b\d{2}:\d{2}:\d{2}\r\n", RegexOptions.IgnoreCase);
