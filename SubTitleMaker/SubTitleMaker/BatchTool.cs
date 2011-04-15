@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using SubExtractor;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace SubTitleMaker
 {
@@ -20,20 +21,26 @@ namespace SubTitleMaker
         public bool isactive = true;
         private bool isrecursive = false;
         private fpstype cameratype = fpstype.Type1;
+        private bool overwrite = false;
+        private bool showsubtime = false;
 
-        public BatchTool(String initaldir, fpstype cameratypein, bool recursive)
+        public BatchTool(String initaldir, fpstype cameratypein, bool recursive, bool overwritefiles, bool showtime)
         {
             startdir = initaldir;
             cameratype = cameratypein;
             isrecursive = recursive;
+            overwrite = overwritefiles;
+            showsubtime = showtime;
             //processdirectory(new DirectoryInfo(initaldir));
         }
 
-        public BatchTool(List<String> directorylist, fpstype cameratypein, bool recursive)
+        public BatchTool(List<String> directorylist, fpstype cameratypein, bool recursive, bool overwritefiles, bool showtime)
         {
             dirlist = directorylist;
             cameratype = cameratypein;
             isrecursive = recursive;
+            overwrite = overwritefiles;
+            showsubtime = showtime;
             //foreach (String nextdirectory in directorylist)
             //{
             //    if (!isactive) break;
@@ -41,22 +48,6 @@ namespace SubTitleMaker
             //}
         }
 
-        private void fakerun()  //just for testing purposes, erase later.
-        {
-            String fakeresult;
-            for (int i = 0; i < 15; i++)
-            {
-                if (!isactive) break;
-                fakeresult = "You are a loser " + i.ToString();
-                resultlog.Add(fakeresult);
-                Thread.Sleep(1000);
-                SubGenEventArgs neweventargs = new SubGenEventArgs(fakeresult, false, "");
-                if (OnSubgenResult != null)
-                {
-                    OnSubgenResult(this, neweventargs);
-                }
-            }
-        }
 
         public void ProcessVideoDirectory()
         {
@@ -93,18 +84,110 @@ namespace SubTitleMaker
             if (!isactive) return;
             if ((file.Extension == ".mts") || (file.Extension == ".m2ts"))
             {
+                try
+                {
+                    SubFile newvideofile = new SubFile();
+                    newvideofile.FpsType = fpstype.Type1;
+                    newvideofile.VideoFile = file.FullName;
+                    newvideofile.MakeSubTitles();
+                    newvideofile.RemoveSubTime();                  
+                    String filename = "   Processed File: " + file.FullName;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(filename, false, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                    if (showsubtime)
+                    {
+                        savesubtitles(file, newvideofile.FullSubOutput);
+                    }
+                    else
+                    {
+                        savesubtitles(file, newvideofile.NoTimeSubOutput);
+                    }
+                }
+                catch
+                {
+                    String filename = "   Error Processing File: " + file.FullName;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(filename, true, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                }
                 //
                 //  add code to actually generate and save the subtitles in here
                 //  try/catch to find errors and trigger appropriate event
                 //
                 //Thread.Sleep(2000); //to simulate reading a real file - erase when code wired up.
-                String filename = "   Processed File: " + file.FullName;
-                SubGenEventArgs neweventargs = new SubGenEventArgs(filename, false, "");
+
+            }
+        }
+
+        private void savesubtitles(FileInfo parentmtsfile, string subtitles)   //remember parentmtsfile is the name of the video file, not the output file
+        {
+            String videofilename = parentmtsfile.FullName;
+            Regex rx = new Regex(@".m2{0,1}ts\z", RegexOptions.IgnoreCase);
+            String savefilename = rx.Replace(videofilename, ".srt");
+            if (File.Exists(savefilename) && overwrite == true)
+            {
+                try
+                {
+                    StreamWriter subfile_stream = new StreamWriter(savefilename, false);
+                    subfile_stream.Write(subtitles);
+                    subfile_stream.Close();
+                    String message = "   Saved file: " + savefilename;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(message, false, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                }
+                catch
+                {
+                    String message = "   Unalbe to write file: " + savefilename;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(message, true, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                }
+            }
+            else if (File.Exists(savefilename) && overwrite == false)
+            {
+                String message = "   File already exists: " + savefilename;
+                SubGenEventArgs neweventargs = new SubGenEventArgs(message, true, "");
                 if (OnSubgenResult != null)
                 {
                     OnSubgenResult(this, neweventargs);
                 }
             }
+            else
+            {
+                try
+                {
+                    StreamWriter subfile_stream = new StreamWriter(savefilename, false);
+                    subfile_stream.Write(subtitles);
+                    subfile_stream.Close();
+                    String message = "   Saved file: " + savefilename;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(message, true, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                }
+                catch
+                {
+                    String message = "   Unalbe to write file: " + savefilename;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(message, true, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
+                }
+            }
+
+            //Console.WriteLine(savefilename);
         }
 
     }

@@ -14,7 +14,7 @@ namespace SubTitleMaker
     public partial class BatchForm1 : Form
     {
         private delegate void runfake();
-        int counter = 0;
+        //int counter = 0;
         BatchTool newbatch;
         List<Object> directories = new List<object>();
         IAsyncResult runhandle;
@@ -39,17 +39,10 @@ namespace SubTitleMaker
             btn_adddir.Enabled = false;
             btn_clear.Enabled = false;
             cb_recursive.Enabled = false;
-            //IEnumerator lb_enumerator =  lb_directories.Items.GetEnumerator();
+            cb_overwrite.Enabled = false;
+            cb_showtime.Enabled = false;
             runfake rundel = new runfake(processdirlist);
             runhandle = rundel.BeginInvoke(onDoneCallback, null);
-            //processdirlist();
-            //runhandle.AsyncWaitHandle.WaitOne(); //this is not good
-            //lb_results.Items.Add("----Finished----");
-            //lb_results.Items.Add("");
-            //while (lb_enumerator.MoveNext())
-            //{
-            //    processdirectory(lb_enumerator.Current.ToString());
-            //}
         }
 
         private void btn_close_Click(object sender, EventArgs e)
@@ -70,7 +63,10 @@ namespace SubTitleMaker
                 lb_directories.Invoke((MethodInvoker)delegate
                 {
                     index = lb_directories.Items.IndexOf(dir);
-                    lb_directories.Items[index] = dir + " -- done";
+                    if (index >= 0)
+                    {
+                        lb_directories.Items[index] = dir + " -- done";
+                    }
                 });
 
 
@@ -79,25 +75,15 @@ namespace SubTitleMaker
         
         private void processdirectory(String dirstring)
         {
-            newbatch = new BatchTool(dirstring, fpstype.Type1, cb_recursive.Checked);
-            //btn_start.Enabled = false;
-            //newbatch.isactive = true;
+            fpstype camtype = fpstype.Type1;
+            if (rb_type0.Checked == true) camtype = fpstype.Type0;
+            if (rb_type1.Checked == true) camtype = fpstype.Type1;
+            newbatch = new BatchTool(dirstring, camtype, cb_recursive.Checked, cb_overwrite.Checked, cb_showtime.Checked);
             newbatch.OnSubgenResult += new BatchTool.SubGenResultHandler(fileprocessed);
             newbatch.OnDirectoryChange += new BatchTool.SubGenDirectoryChanged(directoryevent);
-            //doneprocallback = new AsyncCallback(onDoneCallback);
-            //lb_results.Items.Clear();
-            //lb_test.Text = "Processing...";
-            //btn_stop.Enabled = true;
-            //btn_adddir.Enabled = false;
-            //btn_removedir.Enabled = false;
-            //btn_save.Enabled = false;
-            //btn_adddir.Enabled = false;
-            //btn_clear.Enabled = false;
-            //cb_recursive.Enabled = false;
-            newbatch.ProcessVideoDirectory();    //add asynchronous in calling fn
-            //runfake rundel = new runfake(newbatch.ProcessVideoDirectory);
-            //runhandle = rundel.BeginInvoke(onDoneCallback, null);
-            //btn_start.Enabled = true;
+
+            newbatch.ProcessVideoDirectory();
+
         }
 
         private void fileprocessed(object sender, SubGenEventArgs e)
@@ -112,7 +98,7 @@ namespace SubTitleMaker
             });  //methodinvoker is HANDY!
             
             
-            counter++;
+            //counter++;
         }
 
         private void directoryevent(object sender, SubGenEventArgs e)
@@ -142,7 +128,7 @@ namespace SubTitleMaker
         {
 
             lb_test.Text = "Done Processing"; 
-            btn_start.Enabled = true;
+            btn_start.Enabled = false;
             btn_stop.Enabled = false;
             btn_save.Enabled = true;
             btn_clear.Enabled = true;
@@ -173,10 +159,17 @@ namespace SubTitleMaker
             lb_directories.Items.Clear();
             directories.Clear();
             btn_adddir.Enabled = true;
+            btn_start.Enabled = true;
             btn_removedir.Enabled = true;
             lb_directories.Enabled = true;
             cb_recursive.Enabled = true;
             cb_recursive.Checked = false;
+            cb_overwrite.Enabled = true;
+            cb_overwrite.Checked = false;
+            cb_showtime.Checked = false;
+            cb_showtime.Enabled = true;
+            rb_type1.Checked = true;
+            lb_test.Text = "Ready";
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BatchForm1));
             this.btn_start = new System.Windows.Forms.Button();
             this.btn_close = new System.Windows.Forms.Button();
             this.lb_test = new System.Windows.Forms.Label();
@@ -42,6 +43,12 @@
             this.lb_text2 = new System.Windows.Forms.Label();
             this.lb_text3 = new System.Windows.Forms.Label();
             this.cb_recursive = new System.Windows.Forms.CheckBox();
+            this.cb_overwrite = new System.Windows.Forms.CheckBox();
+            this.rb_type0 = new System.Windows.Forms.RadioButton();
+            this.rb_type1 = new System.Windows.Forms.RadioButton();
+            this.gb_cameratype = new System.Windows.Forms.GroupBox();
+            this.cb_showtime = new System.Windows.Forms.CheckBox();
+            this.gb_cameratype.SuspendLayout();
             this.SuspendLayout();
             // 
             // btn_start
@@ -178,11 +185,67 @@
             this.cb_recursive.Text = "process\r\nsubdirectories";
             this.cb_recursive.UseVisualStyleBackColor = true;
             // 
+            // cb_overwrite
+            // 
+            this.cb_overwrite.AutoSize = true;
+            this.cb_overwrite.Location = new System.Drawing.Point(20, 219);
+            this.cb_overwrite.Name = "cb_overwrite";
+            this.cb_overwrite.Size = new System.Drawing.Size(71, 43);
+            this.cb_overwrite.TabIndex = 15;
+            this.cb_overwrite.Text = "Overwrite\r\nexisting\r\nfiles";
+            this.cb_overwrite.UseVisualStyleBackColor = true;
+            // 
+            // rb_type0
+            // 
+            this.rb_type0.AutoSize = true;
+            this.rb_type0.Location = new System.Drawing.Point(8, 30);
+            this.rb_type0.Name = "rb_type0";
+            this.rb_type0.Size = new System.Drawing.Size(58, 17);
+            this.rb_type0.TabIndex = 16;
+            this.rb_type0.Text = "Type 0";
+            this.rb_type0.UseVisualStyleBackColor = true;
+            // 
+            // rb_type1
+            // 
+            this.rb_type1.AutoSize = true;
+            this.rb_type1.Checked = true;
+            this.rb_type1.Location = new System.Drawing.Point(8, 67);
+            this.rb_type1.Name = "rb_type1";
+            this.rb_type1.Size = new System.Drawing.Size(58, 17);
+            this.rb_type1.TabIndex = 17;
+            this.rb_type1.TabStop = true;
+            this.rb_type1.Text = "Type 1";
+            this.rb_type1.UseVisualStyleBackColor = true;
+            // 
+            // gb_cameratype
+            // 
+            this.gb_cameratype.Controls.Add(this.rb_type1);
+            this.gb_cameratype.Controls.Add(this.rb_type0);
+            this.gb_cameratype.Location = new System.Drawing.Point(12, 323);
+            this.gb_cameratype.Name = "gb_cameratype";
+            this.gb_cameratype.Size = new System.Drawing.Size(99, 90);
+            this.gb_cameratype.TabIndex = 18;
+            this.gb_cameratype.TabStop = false;
+            this.gb_cameratype.Text = "Camera Type";
+            // 
+            // cb_showtime
+            // 
+            this.cb_showtime.AutoSize = true;
+            this.cb_showtime.Location = new System.Drawing.Point(20, 278);
+            this.cb_showtime.Name = "cb_showtime";
+            this.cb_showtime.Size = new System.Drawing.Size(75, 17);
+            this.cb_showtime.TabIndex = 19;
+            this.cb_showtime.Text = "Show time";
+            this.cb_showtime.UseVisualStyleBackColor = true;
+            // 
             // BatchForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 661);
+            this.Controls.Add(this.cb_showtime);
+            this.Controls.Add(this.gb_cameratype);
+            this.Controls.Add(this.cb_overwrite);
             this.Controls.Add(this.cb_recursive);
             this.Controls.Add(this.lb_text3);
             this.Controls.Add(this.lb_text2);
@@ -197,8 +260,11 @@
             this.Controls.Add(this.lb_test);
             this.Controls.Add(this.btn_close);
             this.Controls.Add(this.btn_start);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BatchForm1";
             this.Text = "Date/Time Batch Tool";
+            this.gb_cameratype.ResumeLayout(false);
+            this.gb_cameratype.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -220,5 +286,10 @@
         private System.Windows.Forms.Label lb_text2;
         private System.Windows.Forms.Label lb_text3;
         private System.Windows.Forms.CheckBox cb_recursive;
+        private System.Windows.Forms.CheckBox cb_overwrite;
+        private System.Windows.Forms.RadioButton rb_type0;
+        private System.Windows.Forms.RadioButton rb_type1;
+        private System.Windows.Forms.GroupBox gb_cameratype;
+        private System.Windows.Forms.CheckBox cb_showtime;
     }
 }
