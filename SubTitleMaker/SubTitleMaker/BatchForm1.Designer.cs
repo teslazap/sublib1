@@ -135,6 +135,7 @@
             this.btn_save.TabIndex = 9;
             this.btn_save.Text = "Save Log";
             this.btn_save.UseVisualStyleBackColor = true;
+            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
             // 
             // btn_clear
             // 
