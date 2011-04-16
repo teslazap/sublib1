@@ -86,13 +86,19 @@ namespace SubTitleMaker
             {
                 try
                 {
+                    String message = "   Opening File: " + file.FullName;
+                    SubGenEventArgs neweventargs = new SubGenEventArgs(message, false, "");
+                    if (OnSubgenResult != null)
+                    {
+                        OnSubgenResult(this, neweventargs);
+                    }
                     SubFile newvideofile = new SubFile();
-                    newvideofile.FpsType = fpstype.Type1;
+                    newvideofile.FpsType = cameratype;
                     newvideofile.VideoFile = file.FullName;
                     newvideofile.MakeSubTitles();
                     newvideofile.RemoveSubTime();                  
                     String filename = "   Processed File: " + file.FullName;
-                    SubGenEventArgs neweventargs = new SubGenEventArgs(filename, false, "");
+                    neweventargs = new SubGenEventArgs(filename, false, "");
                     if (OnSubgenResult != null)
                     {
                         OnSubgenResult(this, neweventargs);
@@ -129,6 +135,9 @@ namespace SubTitleMaker
             String videofilename = parentmtsfile.FullName;
             Regex rx = new Regex(@".m2{0,1}ts\z", RegexOptions.IgnoreCase);
             String savefilename = rx.Replace(videofilename, ".srt");
+            //for safety sake check to ensure that this is not the mts or m2ts file!!!
+            FileInfo temp = new FileInfo(savefilename);
+            if (temp.Extension == ".mts" || temp.Extension == ".m2ts") return;
             if (File.Exists(savefilename) && overwrite == true)
             {
                 try

@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using SubExtractor;
 using System.Collections;
+using System.IO;
 
 namespace SubTitleMaker
 {
@@ -23,7 +24,7 @@ namespace SubTitleMaker
         public BatchForm1()
         {
             InitializeComponent();
-          
+
         }
 
         private void btn_start_Click(object sender, EventArgs e)
@@ -72,7 +73,7 @@ namespace SubTitleMaker
 
             }
         }
-        
+
         private void processdirectory(String dirstring)
         {
             fpstype camtype = fpstype.Type1;
@@ -89,15 +90,15 @@ namespace SubTitleMaker
         private void fileprocessed(object sender, SubGenEventArgs e)
         {
 
-             btn_start.Invoke((MethodInvoker)delegate()
-            {
-                String temp = e.resultstring;
-                lb_results.Items.Add(temp);
+            btn_start.Invoke((MethodInvoker)delegate()
+           {
+               String temp = e.resultstring;
+               lb_results.Items.Add(temp);
 
-                //Cursor = Cursors.Default;
-            });  //methodinvoker is HANDY!
-            
-            
+               //Cursor = Cursors.Default;
+           });  //methodinvoker is HANDY!
+
+
             //counter++;
         }
 
@@ -107,7 +108,7 @@ namespace SubTitleMaker
             {
                 String temp = e.resultstring;
                 lb_results.Items.Add(temp);
-               
+
             });  //methodinvoker is HANDY!
         }
 
@@ -127,7 +128,7 @@ namespace SubTitleMaker
         private void done_directory()
         {
 
-            lb_test.Text = "Done Processing"; 
+            lb_test.Text = "Done Processing";
             btn_start.Enabled = false;
             btn_stop.Enabled = false;
             btn_save.Enabled = true;
@@ -170,6 +171,33 @@ namespace SubTitleMaker
             cb_showtime.Enabled = true;
             rb_type1.Checked = true;
             lb_test.Text = "Ready";
+        }
+
+        private void btn_save_Click(object sender, EventArgs e)
+        {
+            String filename;
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Title = "Log File";
+            dlg.Filter = "log file|*.log";
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                filename = dlg.FileName;
+
+                if (!(File.Exists(filename)))
+                {
+                    StreamWriter logfile_stream = new StreamWriter(filename, false);
+                    //logfile_stream.Write(lb_results.Items.ToString());
+                    foreach (String line in lb_results.Items)
+                    {
+                        logfile_stream.WriteLine(line);
+                    }
+                    logfile_stream.Close();
+                }
+                else
+                {
+                    MessageBox.Show("that logfile file already exists");
+                }
+            }
         }
     }
 }
