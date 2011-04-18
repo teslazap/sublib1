@@ -5,10 +5,21 @@
 The Time and Date Subtitle Generator program will generate a subtitle (.mts) file from metadata stored in each frame of a AVCHD (.mts/m2ts) file. The current version allows the user to select a single .mts/m2ts file and generate time/date subtitle file based on the frame specific metadata. The current version also allows for calculating the framerate based on two possible approaches, and allows the user to generate subtitles with time and date, or date only.
 
 
-= Details =
+= Installation =
 
-Use of the Time and Date Subtitle Generator is straightforward:
+There is no installer. Simply uncompress the binaries and run the .exe
 
  # Download the latest binary from the "Downloads" section of this project
  # Extract the .7z file to any convenient location
  # Run the program by starting SubTitleMaker.exe directly
+
+= Usage =
+
+Usage is straightforward and should be self explanatory. To generate subtitle from a single .mts or .m2ts file do the following:
+
+ # Click the "Select Movie File" buton.
+ # Select your .mts or .m2ts file. The path will appear in the top box.
+ # Chose the correct Camera type. You need to do this before generating the subtitles. If the subtitle timing is wrong, use the other setting.
+ # Click "Generate Subtitles". The timer beside "Elapsed Time" will begin counting up. Generating subtitles can take some time. For instance, in one test it took 30 seconds to process a 2GB .mts file. This process is limited by harddisk IO, and will go faster with faster harddisks.
+ # The subtitles will appear in the bottom box. Select or deselect "Display Time" depending on if you want to display the time or not.
+ # Click "Save Subtitles". This version does not allow you to overwrite a previous subtitle file.
