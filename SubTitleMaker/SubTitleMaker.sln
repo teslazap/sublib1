@@ -13,6 +13,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
+		TryX86|Any CPU = TryX86|Any CPU
+		TryX86|Mixed Platforms = TryX86|Mixed Platforms
+		TryX86|x86 = TryX86|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FF5A778B-30E5-496C-87E9-78CB865B339E}.Debug|Any CPU.ActiveCfg = Debug|x86
@@ -25,6 +28,11 @@ Global
 		{FF5A778B-30E5-496C-87E9-78CB865B339E}.Release|Mixed Platforms.Build.0 = Release|x86
 		{FF5A778B-30E5-496C-87E9-78CB865B339E}.Release|x86.ActiveCfg = Release|x86
 		{FF5A778B-30E5-496C-87E9-78CB865B339E}.Release|x86.Build.0 = Release|x86
+		{FF5A778B-30E5-496C-87E9-78CB865B339E}.TryX86|Any CPU.ActiveCfg = TryX86|x86
+		{FF5A778B-30E5-496C-87E9-78CB865B339E}.TryX86|Mixed Platforms.ActiveCfg = TryX86|x86
+		{FF5A778B-30E5-496C-87E9-78CB865B339E}.TryX86|Mixed Platforms.Build.0 = TryX86|x86
+		{FF5A778B-30E5-496C-87E9-78CB865B339E}.TryX86|x86.ActiveCfg = TryX86|x86
+		{FF5A778B-30E5-496C-87E9-78CB865B339E}.TryX86|x86.Build.0 = TryX86|x86
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -32,9 +40,16 @@ Global
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|x86.ActiveCfg = Release|Any CPU
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.Release|x86.Build.0 = Release|Any CPU
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|Any CPU.ActiveCfg = TryX86|Any CPU
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|Any CPU.Build.0 = TryX86|Any CPU
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|Mixed Platforms.ActiveCfg = TryX86|x86
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|Mixed Platforms.Build.0 = TryX86|x86
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|x86.ActiveCfg = TryX86|x86
+		{A37AA3F9-2AFB-4080-8A13-6FC088939282}.TryX86|x86.Build.0 = TryX86|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

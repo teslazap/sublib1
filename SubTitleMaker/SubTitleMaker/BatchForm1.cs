@@ -153,6 +153,7 @@ namespace SubTitleMaker
         {
             Object remove = lb_directories.SelectedItem;
             lb_directories.Items.Remove(remove);
+            directories.Remove(remove);
         }
 
         private void btn_clear_Click(object sender, EventArgs e)
