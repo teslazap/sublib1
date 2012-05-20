@@ -207,5 +207,11 @@ namespace SubTitleMaker
             BatchForm1 batchwindow = new BatchForm1();
             batchwindow.Show();
         }
+
+        private void metadataExtractorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MetadataExtractorTool metaextractwindow = new MetadataExtractorTool();
+            metaextractwindow.Show();
+        }
     }
 }
