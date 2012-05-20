@@ -105,6 +105,21 @@ char * weekday[] = {"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday",
 char * monthname[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 #define BCD_2_INT(c) ((c >> 4)*10+(c&0xf))
 
+//adding definitions for data structures to store full metadata here
+
+typedef struct metastruct {
+	int frameno;
+	int p_flags;
+	__int64 p_pts;
+	__int64 p_dts;
+	__int64 p_pos;
+	int p_dur;
+	unsigned char* framedata;
+} metaframe;
+
+
+//to here
+
 //int srt=-1;			// srt counter
 //char srtT[256], srtTn[256];	// srt text: current and new
 //int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
@@ -172,7 +187,7 @@ __declspec(dllexport) void freesub(char* pointer) {
 
 __declspec(dllexport) char* createsub(char* filename, int cameratype, char token) {
 
-  AVFormatContext *pFormatCtx;
+	AVFormatContext *pFormatCtx;
   int strm;
   int videoStream;
   AVCodecContext *pCodecCtx;
@@ -581,3 +596,417 @@ if (tag==0) {	// hack - hope it's right
   return (bufferptr);
 
 }
+
+
+__declspec(dllexport) void freemetaframe(char** pointer) {
+	free (*pointer); 
+	return;
+}
+
+__declspec(dllexport)  char * getmetaframe(char* filename, int cameratype, long* numberoftags, int* metaframelength, int* numframes, long* duration, float* framerate, unsigned char** framearray)
+	{
+		//int cameratype = 1;
+		AVFormatContext *pFormatCtx;
+		int strm;
+		int videoStream;
+		AVCodecContext *pCodecCtx;
+		AVCodec *pCodec;
+		AVFrame *pFrame;
+		int frameFinished=1;
+		AVPacket packet;
+		uint8_t * ptr;
+		int j;
+		int tag, num_tags, i;
+		int year, month, day, hour, minute, second, tz; 	// ..., timezone
+		int latH, latD, latM, latS; 				// latitude hemi, deg, min, sec
+		int lonE, lonD, lonM, lonS;               		// longitude "east", deg, min, sec
+		int altS, altL, altD;                               	// altitude below/above sea, level, divisor
+		int speed, speD, speU;				// speed, speed divisor, speed unit
+		//unsigned long duration = 0;
+		char* bufferptr;   //this is the pointer to the actual results string
+
+		int srt=-1;			// srt counter
+		char srtT[256], srtTn[256];	// srt text: current and new
+		int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
+		time_t secsince1970, srtTsec=0;	    // Tricky: if new sub is one sec before current, ignore.
+		struct tm t;			// to calculate srtTsec
+		time_t start_time, end_time;	    // to measure the duration per file
+		char SL;			// will be + for above and - for below sea level
+		long int srtTimer;		// start time (in milliseconds) for current srtT
+		int srtH, srtM, srtS, srtmS;	// Hour, Minute, Seconds, milli
+		int foundgeo;
+		int frm;			// frame counter
+		int fps_den, fps_num;		// for the frame rate
+		float fps;
+		char fileout[1024];		// output file name
+		int alignct = 0; // added - used to keep track of the output string position
+		long extract_numframes;
+
+		fprintf(stderr, "Input file name to dll is %s\n", filename);
+
+		av_register_all();
+
+
+		/* allocate the media context */
+		pFormatCtx = avformat_alloc_context();
+		if (!pFormatCtx) {
+			fprintf(stderr, "Memory error\n");
+			return ("memory_error");
+		}
+
+		// Open video file
+		if(av_open_input_file(&pFormatCtx, filename, NULL, 0, NULL)!=0) {
+			fprintf(stderr, "Cannot open file %s.\n", filename);
+			return ("file_open_error");
+		}
+
+	  //if (set_output_file(argv[1])) return -1;   //comment out for use in library
+
+		// Retrieve stream information
+		if(av_find_stream_info(pFormatCtx)<0) {
+			fprintf(stderr, "Could not find stream information\n");
+			return ("no_stream_info");
+		}
+		*duration = pFormatCtx->duration;     //obtain length of movie clip in ffmpeg units whatever they are
+		//duration = duration / 1000000 + 10;  //convert to seconds and add 10, just to be safe
+
+		//bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration. 64 bytes is longer than any subtitle section, but check on long movies!
+		//bufferptr = (char*) malloc (duration * 100);   //100 bytes per subtitle section should be sufficient.
+
+		fprintf(stderr, "the duration var is %d\n",duration);
+		// Dump information about file onto standard error:
+		dump_format(pFormatCtx, 0, filename, 0);
+
+		start_time = time (NULL);
+
+		// Find the first video stream
+		videoStream=-1;
+		for(strm=0; strm<pFormatCtx->nb_streams; strm++)
+			if(pFormatCtx->streams[strm]->codec->codec_type==CODEC_TYPE_VIDEO) {
+			videoStream=strm;
+			//need to place the selecton "if" statements around this
+			//changed the comments from bottom to to top two
+			// some testing done between here:
+			extract_numframes = pFormatCtx->streams[strm]->nb_frames;
+			*numframes = extract_numframes;
+			// and here
+			if (cameratype == 0) {
+			fps_num=pFormatCtx->streams[strm]->r_frame_rate.num;   //version 5
+			fps_den=pFormatCtx->streams[strm]->r_frame_rate.den;   //version 5
+			fps = (float) fps_num / fps_den;  //version 5
+			*framerate = fps;
+			}
+			else if (cameratype == 1) {
+				fps_num=pFormatCtx->streams[strm]->codec->time_base.num; //version 4 //seems to work
+				fps_den=pFormatCtx->streams[strm]->codec->time_base.den; //version 4 //seems to work	  
+				//fps = (float) fps_den / fps_num / 2.0;   //copyied from version 4  //works but 2.0 wrong
+				fps = (float) fps_den / fps_num;   //copyied from version 4 but edited  //this seems to work!
+				*framerate = fps;
+			}
+			else {
+				return ("camera_not_supported_error");
+			}
+	 
+			fprintf(stderr, "  Frame rate: %2.2f (%d/%d)\n", fps, fps_num, fps_den);
+			break;
+			}
+
+		fprintf(stderr, "  Output file name: \'%s\'\n", fileout);
+
+		if(videoStream==-1) {
+			fprintf(stderr, "Did not find a video stream\n");
+			//return -1; // Didn't find a video stream  //commented out for use in library
+			return ("videostream_not_found_error");
+		}
+
+		// Get a pointer to the codec context for the video stream
+		pCodecCtx=pFormatCtx->streams[videoStream]->codec;
+
+		// Find the decoder for the video stream
+		pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
+		if(pCodec==NULL) {
+			fprintf(stderr, "Unsupported codec!\n");
+			//return -1; // Codec not found  //commented out for use in library
+			return ("codec_not_found_error");
+		}
+
+		// Open codec
+		if(avcodec_open(pCodecCtx, pCodec)<0) {
+			fprintf(stderr, "Could not open codec\n");
+			//return -1; // Could not open codec  //commented out for use in library
+			return ("open_codec_error");
+		}
+
+		// Allocate video frame
+			pFrame=avcodec_alloc_frame();
+		
+		//missing tons of stuff between here:
+		//start by grabbing metadata from first frame
+		frm=0;
+		av_read_frame(pFormatCtx, &packet);
+				//Is this a packet from the video stream?
+		if(packet.stream_index==videoStream) {
+			
+			ptr = packet.data;
+			j=0;
+			while ((j<256) && (memcmp(ptr+j, avchd_mdpm, 20))) j++;
+				if (j<256) {
+//					fprintf(stderr, "Found the message at bytes %0d\n", j);
+//					av_hex_dump(stderr, ptr+j, 80);
+
+          /* Skip GUID + MDPM */
+						ptr += j+20;
+
+						num_tags = *ptr; ptr++;
+						*numberoftags = num_tags;
+						*metaframelength = num_tags * 5;
+						//need to allocate storage for frame here using number of tags plus tag length
+						*framearray = (unsigned char *) malloc (num_tags*5+1);
+						/*for(i = 0; i < num_tags; i++)
+							{
+								tag = *ptr; ptr++;
+
+								if (tag==0) {	// hack - hope it's right
+									tag = *ptr; ptr++;
+								}
+
+							}*/
+						memcpy (*framearray,ptr,(num_tags*5));
+						//framearray = ptr;
+				}
+				av_free_packet(&packet);
+				av_free(pFrame);
+				avcodec_close(pCodecCtx);
+				av_close_input_file (pFormatCtx);
+				
+				//av_freep (pFormatCtx); //causes hard crash with no errors on .net side - never returns control
+				return ("found_metaframe");
+		// and here
+		}
+		return ("metaframe_not_found");
+	}
+
+
+
+__declspec(dllexport)  char * getmetadata(char* filename, int cameratype, int numberoftags, int metaframelength, int numberofframes, metaframe* allmetadata)     //unsigned char* metadataarray)
+	{
+
+
+		//int cameratype = 1;
+		AVFormatContext *pFormatCtx;
+		int strm;
+		int videoStream;
+		AVCodecContext *pCodecCtx;
+		AVCodec *pCodec;
+		AVFrame *pFrame;
+		int frameFinished=1;
+		AVPacket packet;
+		uint8_t * ptr;
+		int j;
+		int tag, num_tags, i;
+		int year, month, day, hour, minute, second, tz; 	// ..., timezone
+		int latH, latD, latM, latS; 				// latitude hemi, deg, min, sec
+		int lonE, lonD, lonM, lonS;               		// longitude "east", deg, min, sec
+		int altS, altL, altD;                               	// altitude below/above sea, level, divisor
+		int speed, speD, speU;				// speed, speed divisor, speed unit
+		unsigned long duration = 0;
+		char* bufferptr;   //this is the pointer to the actual results string
+
+		int srt=-1;			// srt counter
+		char srtT[256], srtTn[256];	// srt text: current and new
+		int srtTi=0, srtTni=0;		// index in srtT ans srtTn arrays for next addition
+		time_t secsince1970, srtTsec=0;	    // Tricky: if new sub is one sec before current, ignore.
+		struct tm t;			// to calculate srtTsec
+		time_t start_time, end_time;	    // to measure the duration per file
+		char SL;			// will be + for above and - for below sea level
+		long int srtTimer;		// start time (in milliseconds) for current srtT
+		int srtH, srtM, srtS, srtmS;	// Hour, Minute, Seconds, milli
+		int foundgeo;
+		int frm;			// frame counter
+		int fps_den, fps_num;		// for the frame rate
+		float fps;
+		char fileout[1024];		// output file name
+		int alignct = 0; // added - used to keep track of the output string position
+		int exceededtags = 0;
+		int exceededframes = 0;
+		int p_flags = 0;
+		long p_pts = 0;
+		long p_dts = 0;
+		long p_pos = 0;
+		int p_dur = 0;
+
+		fprintf(stderr, "Input file name to dll is %s\n", filename);
+
+		av_register_all();
+
+
+		/* allocate the media context */
+		pFormatCtx = avformat_alloc_context();
+		if (!pFormatCtx) {
+			fprintf(stderr, "Memory error\n");
+			return ("memory_error");
+		}
+
+		// Open video file
+		if(av_open_input_file(&pFormatCtx, filename, NULL, 0, NULL)!=0) {
+			fprintf(stderr, "Cannot open file %s.\n", filename);
+			return ("file_open_error");
+		}
+
+	  //if (set_output_file(argv[1])) return -1;   //comment out for use in library
+
+		// Retrieve stream information
+		if(av_find_stream_info(pFormatCtx)<0) {
+			fprintf(stderr, "Could not find stream information\n");
+			return ("no_stream_info");
+		}
+		duration = pFormatCtx->duration;     //obtain length of movie clip in ffmpeg units whatever they are
+		duration = duration / 1000000 + 10;  //convert to seconds and add 10, just to be safe
+
+		//bufferptr = (char*) malloc (duration * 64);  //allocate memory to store subtitle string based on duration. 64 bytes is longer than any subtitle section, but check on long movies!
+		//bufferptr = (char*) malloc (duration * 100);   //100 bytes per subtitle section should be sufficient.
+
+		fprintf(stderr, "the duration var is %d\n",duration);
+		// Dump information about file onto standard error:
+		dump_format(pFormatCtx, 0, filename, 0);
+
+		start_time = time (NULL);
+
+		// Find the first video stream
+		videoStream=-1;
+		for(strm=0; strm<pFormatCtx->nb_streams; strm++)
+			if(pFormatCtx->streams[strm]->codec->codec_type==CODEC_TYPE_VIDEO) {
+			videoStream=strm;
+			//need to place the selecton "if" statements around this
+			//changed the comments from bottom to to top two
+			if (cameratype == 0) {
+			fps_num=pFormatCtx->streams[strm]->r_frame_rate.num;   //version 5
+			fps_den=pFormatCtx->streams[strm]->r_frame_rate.den;   //version 5
+			fps = (float) fps_num / fps_den;  //version 5
+			}
+			else if (cameratype == 1) {
+				fps_num=pFormatCtx->streams[strm]->codec->time_base.num; //version 4 //seems to work
+				fps_den=pFormatCtx->streams[strm]->codec->time_base.den; //version 4 //seems to work	  
+				//fps = (float) fps_den / fps_num / 2.0;   //copyied from version 4  //works but 2.0 wrong
+				fps = (float) fps_den / fps_num;   //copyied from version 4 but edited  //this seems to work!
+			}
+			else {
+				return ("camera_not_supported_error");
+			}
+	 
+			fprintf(stderr, "  Frame rate: %2.2f (%d/%d)\n", fps, fps_num, fps_den);
+			break;
+			}
+
+		fprintf(stderr, "  Output file name: \'%s\'\n", fileout);
+
+		if(videoStream==-1) {
+			fprintf(stderr, "Did not find a video stream\n");
+			//return -1; // Didn't find a video stream  //commented out for use in library
+			return ("videostream_not_found_error");
+		}
+
+		// Get a pointer to the codec context for the video stream
+		pCodecCtx=pFormatCtx->streams[videoStream]->codec;
+
+		// Find the decoder for the video stream
+		pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
+		if(pCodec==NULL) {
+			fprintf(stderr, "Unsupported codec!\n");
+			//return -1; // Codec not found  //commented out for use in library
+			return ("codec_not_found_error");
+		}
+
+		// Open codec
+		if(avcodec_open(pCodecCtx, pCodec)<0) {
+			fprintf(stderr, "Could not open codec\n");
+			//return -1; // Could not open codec  //commented out for use in library
+			return ("open_codec_error");
+		}
+
+		// Allocate video frame
+			pFrame=avcodec_alloc_frame();
+		
+		//missing tons of stuff between here:
+		//start by grabbing metadata from first frame
+		frm=0;
+		while (av_read_frame(pFormatCtx, &packet)>=0)  {
+
+			//frm++;
+			if (frm > numberofframes) {
+				exceededframes = 1;
+				break;
+				//return ("file_exceeded_frames_allocated");
+			}
+
+				//Is this a packet from the video stream?
+			if(packet.stream_index==videoStream) {
+				
+				ptr = packet.data;
+				p_flags = packet.flags;
+				p_pts = packet.pts;
+				p_dts = packet.dts;
+				p_pos = packet.pos;
+				p_dur = packet.duration;
+
+				j=0;
+				while ((j<256) && (memcmp(ptr+j, avchd_mdpm, 20))) j++;
+				if ((j<256)&&(p_dur > 0)) {
+					//fprintf(stderr, "Found the message at bytes %0d\n", j);
+					//av_hex_dump(stderr, ptr+j, 80);
+
+					/* Skip GUID + MDPM */
+					frm++;
+					ptr += j+20;
+
+					num_tags = *ptr; ptr++;
+					if (num_tags > numberoftags) {
+						exceededtags = 1;
+					}
+					//*numberoftags = num_tags;
+					//*metaframelength = num_tags * 5;
+						//need to allocate storage for frame here using number of tags plus tag length
+						//*framearray = (unsigned char *) malloc (num_tags*5+1);
+						/*for(i = 0; i < num_tags; i++)
+							{
+								tag = *ptr; ptr++;
+
+								if (tag==0) {	// hack - hope it's right
+									tag = *ptr; ptr++;
+								}
+
+							}*/
+
+					//ptr is now positioned at the proper place on the metadata, ready to add read code.
+					//memcpy (metadataarray,ptr,(num_tags*5));
+					//return ("before use");
+					allmetadata[frm-1].frameno = frm;
+					allmetadata[frm-1].p_flags = p_flags;
+					allmetadata[frm-1].p_pts = p_pts;
+					allmetadata[frm-1].p_dts = p_dts;
+					allmetadata[frm-1].p_pos = p_pos;
+					allmetadata[frm-1].p_dur = p_dur;
+					//return ("after set frameno"); //gets to here, so what gives?
+					//allmetadata[frm-1].framedata = (unsigned char *)malloc (metaframelength);
+					memcpy (allmetadata[frm-1].framedata,ptr,(metaframelength));   //all the trouble comes down to this. The frameno works ok.
+					//memcpy (allmetadata[frm-1].framedata,ptr,2);
+					//return ("after first copy");
+				}
+					
+			}
+		av_free_packet(&packet);
+		}
+		//av_free_packet(&packet);
+		av_free(pFrame);
+		avcodec_close(pCodecCtx);
+		av_close_input_file (pFormatCtx);
+		if (exceededtags == 1)
+		{
+			return ("exceeded_tags_metadata_copied");
+		}
+		if (exceededframes == 1)
+		{
+			return ("exceeded_framenumber_metadata_copied");
+		}
+		return ("metadata_copied");
+	}
