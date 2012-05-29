@@ -49,11 +49,11 @@ The latest version has a feature to dump all the frame specific metadata to a te
 
 A text representation of the metadata in each frame of the video file is stored. Currently the output includes:
 
-#The frame number
-#FFMpeg's presentation timestamp (pts)
-#FFMpeg's decompression timestamp (dts)
-#FFMPeg's reported position in the file (in bytes, probably)
-#The metadata itself, in hex representation
+ # The frame number
+ # FFMpeg's presentation timestamp (pts)
+ # FFMpeg's decompression timestamp (dts)
+ # FFMPeg's reported position in the file (in bytes, probably)
+ # The metadata itself, in hex representation
 
 Search Google for "EXIFtool", a sophisticated Perl tool for reading metadata. More information about the metatags is available. 
 
