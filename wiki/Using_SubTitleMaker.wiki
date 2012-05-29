@@ -37,4 +37,28 @@ If you wish to process an entire directory of .mts files, or even an entire dire
  # Click "Start". The tool will begin processing your folders and display the results in the "Results Log" list. If you wish to stop the processing, you can click "Stop", but be aware that this will only stop the tool after it has finished processing the current .mts file it is working on. 
  # If you will to save the log of the results, click "Save Log".
 
+= Dumping Metadata to File =
+
+The latest version has a feature to dump all the frame specific metadata to a text file. This is an experimental feature that is still work in progress. Usage is simple:
+
+#Choose "metadata extractor" from the Tools menu
+#Select the .mts file you are interested in
+#Click "analyze file" - This starts the process of reading the .mts file and extracting the metadata. It may take a while depending on the size of the file. It also might crash until the bugs are worked out
+#If the file is read successfully, some information about that video file will be output to the textbox
+#After a successful read, click "Save" to store the metadata in a text file.
+
+A text representation of the metadata in each frame of the video file is stored. Currently the output includes:
+
+#The frame number
+#FFMpeg's presentation timestamp (pts)
+#FFMpeg's decompression timestamp (dts)
+#FFMPeg's reported position in the file (in bytes, probably)
+#The metadata itself, in hex representation
+
+Search Google for "EXIFtool", a sophisticated Perl tool for reading metadata. More information about the metatags is available. 
+
+For my tool, the metadata itself is read to a C# class that is easy to extend if one wishes a different output format. Feel free to download the source and edit to your wishes, or let me know if you would like other features.
+
+
+
 That's about it. 
