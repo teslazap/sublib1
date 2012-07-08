@@ -41,6 +41,10 @@ namespace SubTitleMaker
         public Form1()
         {
             InitializeComponent();
+            //going to try to put donate box up front
+            //Donate origdonate = new Donate();
+            //origdonate.ShowDialog();
+
             ttip_camera.SetToolTip(groupBox_cameratype, "Method of Determing Frame rate\nIf subtitle time doesn't sync or is slow\ntry the other setting");
             ttip_displaytime.SetToolTip(cb_timedisp, "Select to show both date and time");
             cb_timedisp.Checked = true;
@@ -124,6 +128,8 @@ namespace SubTitleMaker
 
         private void btn_exit_Click(object sender, EventArgs e)
         {
+            //Donate origdonate = new Donate();
+            //origdonate.ShowDialog();
             Application.Exit();
         }
 
@@ -181,6 +187,8 @@ namespace SubTitleMaker
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Donate origdonate = new Donate();
+            //origdonate.ShowDialog();
             Application.Exit();
         }
 
@@ -212,6 +220,24 @@ namespace SubTitleMaker
         {
             MetadataExtractorTool metaextractwindow = new MetadataExtractorTool();
             metaextractwindow.Show();
+        }
+
+        private void donateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Donate donateWindow = new Donate();
+            donateWindow.Show();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Donate origdonate = new Donate();
+            //origdonate.ShowDialog();
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Donate origdonate = new Donate();
+            origdonate.ShowDialog();
         }
     }
 }
