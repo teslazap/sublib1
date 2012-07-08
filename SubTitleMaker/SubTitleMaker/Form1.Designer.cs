@@ -65,11 +65,12 @@ namespace SubTitleMaker
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolstoolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.batchToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.metadataExtractorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.donateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cb_timedisp = new System.Windows.Forms.CheckBox();
             this.ttip_displaytime = new System.Windows.Forms.ToolTip(this.components);
-            this.metadataExtractorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox_cameratype.SuspendLayout();
             this.menu_mainmenu.SuspendLayout();
             this.SuspendLayout();
@@ -244,10 +245,18 @@ namespace SubTitleMaker
             this.batchToolToolStripMenuItem.Text = "Batch Tool";
             this.batchToolToolStripMenuItem.Click += new System.EventHandler(this.batchToolToolStripMenuItem_Click);
             // 
+            // metadataExtractorToolStripMenuItem
+            // 
+            this.metadataExtractorToolStripMenuItem.Name = "metadataExtractorToolStripMenuItem";
+            this.metadataExtractorToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.metadataExtractorToolStripMenuItem.Text = "Metadata Extractor";
+            this.metadataExtractorToolStripMenuItem.Click += new System.EventHandler(this.metadataExtractorToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem1});
+            this.aboutToolStripMenuItem1,
+            this.donateToolStripMenuItem});
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.aboutToolStripMenuItem.Text = "Help";
@@ -258,6 +267,14 @@ namespace SubTitleMaker
             this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem1.Text = "About";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.aboutToolStripMenuItem1_Click);
+            // 
+            // donateToolStripMenuItem
+            // 
+            this.donateToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("donateToolStripMenuItem.Image")));
+            this.donateToolStripMenuItem.Name = "donateToolStripMenuItem";
+            this.donateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.donateToolStripMenuItem.Text = "Donate";
+            this.donateToolStripMenuItem.Click += new System.EventHandler(this.donateToolStripMenuItem_Click);
             // 
             // cb_timedisp
             // 
@@ -270,13 +287,6 @@ namespace SubTitleMaker
             this.cb_timedisp.Text = "Display Time";
             this.cb_timedisp.UseVisualStyleBackColor = true;
             this.cb_timedisp.Click += new System.EventHandler(this.cb_timedisp_Click);
-            // 
-            // metadataExtractorToolStripMenuItem
-            // 
-            this.metadataExtractorToolStripMenuItem.Name = "metadataExtractorToolStripMenuItem";
-            this.metadataExtractorToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.metadataExtractorToolStripMenuItem.Text = "Metadata Extractor";
-            this.metadataExtractorToolStripMenuItem.Click += new System.EventHandler(this.metadataExtractorToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -302,6 +312,8 @@ namespace SubTitleMaker
             this.MinimumSize = new System.Drawing.Size(640, 525);
             this.Name = "Form1";
             this.Text = "Time and Date Subtitle Generator";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox_cameratype.ResumeLayout(false);
             this.groupBox_cameratype.PerformLayout();
@@ -338,6 +350,7 @@ namespace SubTitleMaker
         private System.Windows.Forms.ToolStripMenuItem toolstoolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem batchToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem metadataExtractorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem donateToolStripMenuItem;
     }
 }
 
