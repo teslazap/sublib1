@@ -8,3 +8,7 @@ It was exported to preserve the source code prior to the Google Code service shu
 * **Status:** Read-only / Unmaintained Mirror
 
 *Disclaimer: None of the code in this repository was written by the current maintainer of this mirror. All credit goes to the original authors.*
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0 (GPLv3)**, as originally specified by the authors on Google Code.
